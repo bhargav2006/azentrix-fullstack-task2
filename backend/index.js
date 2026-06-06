@@ -13,12 +13,14 @@ const { initSocket } = require("./src/utils/socket");
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = ["http://localhost:5173", process.env.CORS_ORIGIN];
 
 // Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN,
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   },
 });
 
@@ -29,7 +31,7 @@ app.set("io", io);
 initSocket(io);
 
 // Middleware
-app.use(cors({ origin: process.env.CORS_ORIGIN }));
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 // Routes

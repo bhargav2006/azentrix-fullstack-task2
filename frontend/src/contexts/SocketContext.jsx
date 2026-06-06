@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
-import { useAuth } from './AuthContext';
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
+import { useAuth } from "./AuthContext";
 
 const SocketContext = createContext(null);
 
@@ -19,30 +19,33 @@ export function SocketProvider({ children }) {
       return;
     }
 
-    const token = localStorage.getItem('azentrix_token');
+    const token = localStorage.getItem("azentrix_token");
 
     // Connect to same origin, Vite dev server handles proxy to backend at localhost:5000
-    const socket = io(window.location.origin, {
-      auth: { token },
-      transports: ['websocket', 'polling'],
-      withCredentials: true,
-    });
+    const socket = io(
+      import.meta.env.VITE_SOCKET_URL || "http://localhost:5000",
+      {
+        auth: { token },
+        transports: ["websocket", "polling"],
+        withCredentials: true,
+      },
+    );
 
     socketRef.current = socket;
 
-    socket.on('connect', () => {
+    socket.on("connect", () => {
       setConnected(true);
-      socket.emit('join:board');
-      console.log('⚡ [Socket.IO] Connected & joined board room');
+      socket.emit("join:board");
+      console.log("⚡ [Socket.IO] Connected & joined board room");
     });
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
       setConnected(false);
-      console.log('⚡ [Socket.IO] Disconnected');
+      console.log("⚡ [Socket.IO] Disconnected");
     });
 
-    socket.on('connect_error', (err) => {
-      console.warn('⚡ [Socket.IO] Connection error:', err.message);
+    socket.on("connect_error", (err) => {
+      console.warn("⚡ [Socket.IO] Connection error:", err.message);
     });
 
     return () => {
@@ -62,7 +65,7 @@ export function SocketProvider({ children }) {
 export function useSocket() {
   const context = useContext(SocketContext);
   if (!context) {
-    throw new Error('useSocket must be used within a SocketProvider');
+    throw new Error("useSocket must be used within a SocketProvider");
   }
   return context;
 }

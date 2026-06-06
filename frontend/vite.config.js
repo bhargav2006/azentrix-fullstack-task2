@@ -1,7 +1,5 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import dotenv from "dotenv";
-dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,11 +8,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: process.env.BACKEND_URL,
+        target: "https://azentrix-fullstack-task2-6mn2.onrender.com",
         changeOrigin: true,
       },
       "/socket.io": {
-        target: process.env.BACKEND_URL,
+        target: "https://azentrix-fullstack-task2-6mn2.onrender.com",
         ws: true,
         changeOrigin: true,
       },
