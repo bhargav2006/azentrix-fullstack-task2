@@ -13,7 +13,11 @@ const { initSocket } = require("./src/utils/socket");
 
 const app = express();
 const server = http.createServer(app);
-const allowedOrigins = ["http://localhost:5173", process.env.CORS_ORIGIN];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost",
+  process.env.CORS_ORIGIN,
+];
 
 // Socket.IO
 const io = new Server(server, {
@@ -46,7 +50,16 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-connectDB();
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to connect to database:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
